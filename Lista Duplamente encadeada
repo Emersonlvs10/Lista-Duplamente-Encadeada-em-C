@@ -1,0 +1,407 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define CLEAR system("clear||cls")
+/*
+ @Emerson Alves pereira
+*/
+
+// Estrutura do Nó
+struct no{
+   int numero;
+   struct no *proximo;
+   struct no *anterior;
+};
+
+// Estrutura do Nó Cabeça
+ struct  noCabeca{
+   int quantNos;
+   struct no *inicio;
+   struct no *fim;
+};
+
+
+struct noCabeca L1;
+struct noCabeca L2;
+struct noCabeca L3;
+
+
+int inserirElemento(int elem, struct noCabeca *lista){
+    //Se o elemento for invalido, retorna 1;
+    //Se inseriu o elemento, retorna 0;
+    struct no *novoNo, *item, *anterior;
+
+    if (elem <= 0){
+    
+        return 1;
+    }
+
+    //Criar um novo no
+    novoNo = (struct no *)malloc(sizeof(struct no));
+    novoNo->numero = elem;
+// verifica se a Lista está vazia
+    if (lista->inicio == NULL){
+        lista->inicio = novoNo;
+        novoNo->proximo=NULL;
+        novoNo->anterior=NULL;
+        lista->quantNos++;
+        lista->fim=novoNo;
+        return 0;
+    }
+
+    item = lista->inicio;
+    
+    while(item->numero!=elem && item->proximo!=NULL){
+      item=item->proximo;
+    }
+
+if (item->numero==elem){
+  return 1;
+}
+
+
+item = lista->inicio;
+
+    while (item->numero < elem && item->proximo != NULL){
+        item = item->proximo;
+    }
+
+
+    if (item->numero > elem){
+        if (item == lista->inicio){ 
+            novoNo->proximo = lista->inicio;
+            novoNo->anterior = NULL;
+            item->anterior = novoNo;
+            lista->inicio = novoNo;
+            lista->quantNos++;
+            lista->fim=novoNo;
+           return 0;
+
+        }
+        else{
+            novoNo->proximo = item;
+            novoNo->anterior = item->anterior;
+            item->anterior->proximo = novoNo;
+            item->anterior = novoNo;
+            lista->quantNos++;
+       return 0;
+        }
+
+    }
+
+    item->proximo=novoNo;
+    novoNo->anterior = item;
+    novoNo->proximo=NULL;
+    lista->quantNos++;
+    lista->fim=novoNo;
+
+ 
+    //elemento inserido
+    return 0;
+}
+int verificar(int elem){
+struct no *aux, *aux2;
+// Se as duas listas estiverem vazias, retorne 4
+if(L1.inicio==NULL && L2.inicio==NULL ){
+  return 4;
+}
+// Se a L1 estiver vazia, faz a busca na L2
+if (L1.inicio==NULL && L2.inicio!=NULL ){
+  aux2=L2.inicio;
+  while (aux2->numero!=elem && aux2->proximo!=NULL){
+  aux2=aux2->proximo;
+}
+if (aux2->numero==elem){
+  return 2;
+}
+}
+// Se a L2 estiver vazia, faz a busca na L1
+if (L1.inicio!=NULL && L2.inicio==NULL ){
+  aux=L1.inicio;
+  while (aux->numero!=elem && aux->proximo!=NULL){
+  aux=aux->proximo;
+}
+if (aux->numero==elem){
+  return 1;
+}
+}
+
+aux=L1.inicio;
+aux2=L2.inicio;
+//busca o elemento no L1 
+while (aux->numero!=elem && aux->proximo!=NULL){
+  aux=aux->proximo;
+}
+//busca o elemento no L2 
+while (aux2->numero!=elem && aux2->proximo!=NULL){
+  aux2=aux2->proximo;
+}
+
+if (aux->numero==elem && aux2->numero==elem ){
+return 3;
+}else if (aux->numero==elem && aux2->numero!=elem){
+  return 1;
+}else if (aux->numero!=elem && aux2->numero==elem){
+  return 2;
+}else
+ return 0;
+}
+
+int removerElemento(int elem, struct noCabeca *lista){
+    //retorna -1 se o elemento nao foi encontrado
+    //retorna 0 se o elemento foi excluido
+
+    struct no *item, *anterior;
+
+   //Se a lista esta vazia, retorna NULL
+    if (lista->inicio == NULL){
+        return -1; //Lista esta vazia
+    }
+
+
+    item = lista->inicio;
+    while (item->numero != elem && item->proximo != NULL){
+        item = item->proximo;
+    }
+
+    if (item->numero == elem){
+        if (item == lista->inicio){ //o elemento a ser excluida Ã© o 1o nÃ³
+            lista->inicio = item->proximo;
+            if (lista->inicio != NULL)
+                lista->inicio->anterior = NULL;
+            lista->quantNos--;
+        }
+        else{
+            item->anterior->proximo = item->proximo;
+            if (item->proximo!= NULL)
+                item->proximo->anterior = item->anterior;
+                lista->fim=item->anterior;
+            lista->quantNos--;
+        }
+        //elemento encontrado
+        return 0;
+    }
+    return -1;
+}
+
+int removerElementoEmOrdem(struct noCabeca *lista){
+    //retorna -1 se o elemento nao foi encontrado
+    //retorna 0 se o elemento foi excluido
+
+    struct no *item, *num;
+  
+   //Se a lista esta vazia, retorna NULL
+    if (lista->inicio == NULL){
+        return -1; //Lista esta vazia
+    }
+    num=lista->inicio;
+item=lista->inicio->proximo;
+lista->inicio=item;
+lista->quantNos=lista->quantNos--;
+        //elemento encontrado
+        return num->numero ;
+    
+}
+
+
+struct noCabeca Unir_lista(struct noCabeca *L1,struct noCabeca *L2,struct noCabeca *L3  ){
+  struct noCabeca *aux, *aux2;
+  struct no *aux3,*aux4;
+
+if(L1->inicio==NULL && L2->inicio==NULL ){
+  L3->inicio=NULL;
+ L3->fim=NULL;
+  L3->quantNos=0;
+}
+
+if (L1->inicio!=NULL && L2->inicio==NULL ){
+L3->inicio=L1->inicio;
+L3->fim=L1->fim;
+L3->quantNos=L1->quantNos;
+}
+
+if (L1->inicio==NULL && L2->inicio!=NULL ){
+L3->inicio=L2->inicio;
+L3->fim=L2->fim;
+L3->quantNos=L2->quantNos;
+}
+
+if(L1->inicio!=NULL && L2->inicio!=NULL ){
+aux=L1;
+aux2=L2;
+aux3=L1->inicio;
+aux4=L2->inicio;
+
+while(aux->quantNos>0){
+inserirElemento(aux3->numero, L3);
+aux3=aux3->proximo;
+aux->quantNos--;
+}
+
+while(aux2->quantNos>0){
+inserirElemento(aux4->numero, L3);
+aux4=aux4->proximo;
+aux2->quantNos--;
+}
+
+}
+return *L3;
+}
+
+
+void InicializarLista(struct noCabeca *lista){
+  lista->inicio=NULL;
+ lista->fim=NULL;
+  lista->quantNos=0;
+
+}
+void Mostrar(struct noCabeca *lista){
+  struct no *aux;
+  int i;
+aux=lista->inicio;
+for(i=0;i<lista->quantNos;i++){
+printf("%d\n ", aux->numero);
+aux=aux->proximo;
+}
+printf("\n");
+}
+
+int main(void) {
+struct noCabeca aux,aux2;
+
+InicializarLista(&L1);
+InicializarLista(&L2);
+InicializarLista(&L3);
+ aux=L1;
+ aux2=L2;
+int opcao,elemento, lista,retorno;
+
+do{
+    
+        printf("Escolha o que deseja fazer\n\n");
+        printf("1-Incluir elemento\n");
+        printf("2-Verificar se o elemento esta em alguma lista\n");
+        printf("3-Unir listas 1 e 2 \n");
+        printf("4-Excluir elemento em Ordem na Lista 3\n");
+        printf("5-Excluir elemento em uma Lista \n");
+        printf("6-Mostrar Listas\n");
+        printf("7-Encerrar\n");
+        scanf("%d",&opcao);
+        CLEAR;
+
+       
+
+        switch (opcao){
+        case 1:
+            printf("Digite o elemento que deseja inserir\n");
+            scanf("%d",&elemento);
+            printf("Em qual Lista deseja inserir? \n");
+            printf("(1) Lista 1 \t\t\t\t (2) Lista 2 \n");
+            scanf("%d",&lista);
+            if(lista==1){
+            retorno=inserirElemento(elemento, &L1);
+            }else if (lista==2) {
+           retorno=inserirElemento(elemento, &L2);
+            }else {
+          printf("Opção invalida !!");
+            }
+            if (retorno == 0){
+                printf("Elemento inserido\n\n");
+            }else{
+                printf("Elemento invalido\n\n");
+                }
+          printf("LISTA 1: \n");
+          Mostrar(&L1);
+           printf("LISTA 2: \n");  
+          Mostrar(&L2);
+          
+            break;
+        case 2:
+        
+            printf("Digite o elemento que deseja consultar\n");
+            scanf("%d",&elemento);
+            retorno=verificar(elemento);
+            switch (retorno){
+              case 1:
+               printf("Elemento cadastrado na lista 1\n");
+               break;
+              case 2:
+              printf("Elemento cadastrado na lista 2\n");
+              break;
+              case 3:
+              printf("Elemento cadastrado nas duas listas \n");
+              break;
+              case 4:
+              printf("Listas Vazias!! \n");
+              break;
+             default:
+                printf("Elemento nao encontrado\n");
+            }
+            break;
+        case 3:
+           aux=L1;
+            aux2=L2;
+             InicializarLista(&L3);
+            
+             Unir_lista(&aux, &aux2,&L3);
+              printf("LISTA 3: \n"); 
+             Mostrar(&L3);
+            printf("Listas unidas!\n");
+            break;
+         
+        case 4:
+         elemento = removerElementoEmOrdem(&L3);
+         printf("Elemento %d Removido da Lista! \n\n",elemento);
+    
+            break;
+        case 5:
+         printf("LISTA 1: \n");
+          Mostrar(&L1);
+           printf("LISTA 2: \n");  
+          Mostrar(&L2);
+
+         printf("Digite o elemento que deseja Remover\n");
+            scanf("%d",&elemento);
+            printf("Em qual Lista deseja Remover? \n");
+            printf("(1) Lista 1 \t\t\t\t (2) Lista 2 \n");
+            scanf("%d",&lista);
+            if(lista==1){
+            retorno=removerElemento(elemento,&L1);
+            }else if (lista==2) {
+           retorno=removerElemento(elemento,&L2);
+            }else {
+              printf("Opção invalida !!");
+            }
+             if (retorno == 0){
+                printf("Elemento Removido\n\n");
+            }else{
+                printf("Elemento invalido\n\n");
+                }
+
+         printf("LISTA 1: \n");
+          Mostrar(&L1);
+           printf("LISTA 2: \n");  
+          Mostrar(&L2);
+          break;
+
+          case 6:
+           printf("LISTA 1: \n");
+          Mostrar(&L1);
+           printf("LISTA 2: \n");  
+          Mostrar(&L2);
+           printf("LISTA 3: \n"); 
+             Mostrar(&L3);
+          break;
+
+        case 7:
+        printf("Fim do Programa !!\n");
+          break;
+
+        default:
+            printf("Opção invalida\n");
+        }
+    }while(opcao!=7);
+ 
+
+
+  return 0;
+}
